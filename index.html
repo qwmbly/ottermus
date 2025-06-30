@@ -1,36 +1,97 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        html, body {
             margin: 0;
             padding: 0;
+            height: 100%;
             background-color: #222222;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .section {
             height: 100vh;
-            overflow: hidden;
-        }
-        .image-container {
-            max-width: 100%;
-            max-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            scroll-snap-align: start;
+            position: relative;
         }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         img {
             max-width: 90%;
-            max-height: 90vh;
+            max-height: 90%;
             object-fit: contain;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .visible img {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .down-arrow {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: white;
+            animation: bounce 1.5s infinite;
+            z-index: 2;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
         }
     </style>
 </head>
 <body>
-    <div class="image-container">
+
+    <!-- Section 1: Looping video -->
+    <div class="section">
+        <video autoplay muted loop playsinline>
+            <source src="hello.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="down-arrow">&#x2193;</div>
+    </div>
+
+    <!-- Section 2: First image -->
+    <div class="section">
         <img src="hello.png" alt="">
     </div>
+
+    <!-- Section 3: Second image -->
+    <div class="section">
+        <img src="hello2.png" alt="">
+    </div>
+
+    <script>
+        const sections = document.querySelectorAll('.section');
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        sections.forEach(section => observer.observe(section));
+    </script>
 </body>
 </html>
